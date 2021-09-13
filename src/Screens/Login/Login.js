@@ -19,12 +19,11 @@ const Login = () => {
     async function handleSignInWithGoogle(e){
         e.preventDefault();
         try {
-            // setError("");
-            // setLoading(true);
-            await loginWithGoogle()
-            history.push("/");
+            setError("");
+            setLoading(true);
+            await loginWithGoogle()         
             } catch {
-            // setError("Failure, minimum 6 characters password is required");
+            setError("Failure, minimum 6 characters password is required");
             console.log("error");
         }
     }
@@ -74,7 +73,7 @@ const Login = () => {
                 <Text textAlign="center" my="6">Or continue with email</Text>
 
                 <FormControl id="email">
-                <Input ref={ emailRef } type="email" placeholder="Enter email" />
+                <Input ref={ emailRef } type="email" placeholder="Enter email" autoComplete="off" />
                 </FormControl>
 
                 <FormControl id="password" mt="4">

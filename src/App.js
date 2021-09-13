@@ -5,6 +5,7 @@ import Signup from './Screens/Signup/Signup';
 import Home from './Screens/Home/Home';
 import { AuthProvider } from "../src/Context/AuthContext";
 import PrivateRoute from './Screens/PrivateRoute';
+import MedicineForm from './Screens/MedicineForm/MedicineForm';
 
 function App() {
   return (
@@ -25,6 +26,14 @@ function App() {
           <Route exact path="/login">
             <Login/>
           </Route>
+
+          {/* <Route exact path="/login">
+            <MedicineForm/>
+          </Route> */}
+
+
+
+          <PrivateRoute exact path="/medicine-form" component={ MedicineForm }/>
 
         </Switch>
 
