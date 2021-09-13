@@ -12,9 +12,22 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState()
   const [loading, setLoading] = useState(true)
+  const history = useHistory();
 
   function loginWithGoogle() {
-    return auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+  // Using a popup.
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('profile');
+  provider.addScope('email');
+  firebase.auth().signInWithPopup(provider).then(function(result) {
+  // This gives you a Google Access Token.
+  var token = result.credential.accessToken;
+  // The signed-in user info.
+  var user = result.user;
+  if(user){
+    history.push("/");
+  }
+  });
   }
 
   function signup(email, password) {
@@ -41,17 +54,16 @@ export function AuthProvider({ children }) {
 //     return currentUser.updatePassword(password)
 //   }
 
-const history = useHistory();
+
 
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
+      const unsubscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user);
       setLoading(false);
-      history.push("/");
     })
-    return unsubscribe
-  }, [])
+    return unsubscribe;
+  }, [currentUser,history])
 
   const value = {
     currentUser,

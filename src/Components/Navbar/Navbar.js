@@ -27,7 +27,7 @@ const Navbar = () => {
 
             <Link>
             <Text fontSize="2xl" ml="5">
-            Swiftchat
+            MedEasy
             </Text>
             </Link>
 

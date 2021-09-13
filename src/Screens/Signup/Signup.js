@@ -82,7 +82,7 @@ const Signup = () => {
                 <Text textAlign="center" my="6">Or continue with email</Text>
 
                 <FormControl id="email">
-                <Input ref={ emailRef } type="email" placeholder="Enter email" />
+                <Input ref={ emailRef } type="email" placeholder="Enter email" autoComplete="off" />
                 </FormControl>
 
                 <FormControl id="password" mt="4">
