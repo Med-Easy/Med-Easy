@@ -8,7 +8,7 @@ import { DarkMode } from "@chakra-ui/react";
 
 ReactDOM.render(
   <ChakraProvider>
-    <App />
+      <App />
   </ChakraProvider>,
   document.getElementById('root')
 );
