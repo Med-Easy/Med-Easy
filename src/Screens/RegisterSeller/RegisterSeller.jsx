@@ -462,7 +462,7 @@ const RegisterSeller = ({ coords }) => {
                             <div className='col-lg-6'>
                                 <FormControl id="shop-img">
                                     <FormLabel>Upload your Shop's image</FormLabel>
-                                    <input type='file' onChange={handleShopImageChange} />
+                                    <input type='file' onChange={handleShopImageChange} className="form-control" id="formFile"/>
                                     <FormHelperText># This image will be displayed to the customers</FormHelperText>
                                 </FormControl>
                                 {/* {imgUploading1 && <p>{progress1} %</p>} */}
@@ -485,7 +485,7 @@ const RegisterSeller = ({ coords }) => {
                             <div className='col-lg-6'>
                                 <FormControl id="owner-id-img">
                                     <FormLabel>Upload Shop owner's photo id</FormLabel>
-                                    <input type='file' onChange={handleShopIdChange} />
+                                    <input type='file' onChange={handleShopIdChange} className="form-control" id="formFile" />
                                     <FormHelperText># This image will be used to verify the owner</FormHelperText>
                                 </FormControl>
                                 {
@@ -504,29 +504,29 @@ const RegisterSeller = ({ coords }) => {
 
                                 {shopIdUrl && <img className='img-fluid' src={shopIdUrl} alt="thumbnail" style={{ width: '500px' }} />}
                             </div>
-                        </div>
 
-                        <div className='input'>
-                            <FormControl id="shop-certificate-img">
-                                <FormLabel>Shop certificate</FormLabel>
-                                <input type='file' onChange={handleShopCertificateChange} />
-                                <FormHelperText># This image will be used for verification of the Pharmacy</FormHelperText>
-                            </FormControl>
-                            {
-                                imgUploading3 && (
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        padding: '30px'
-                                    }}>
-                                        <CircularProgress value={progress3} color="teal">
-                                            <CircularProgressLabel>{progress3}%</CircularProgressLabel>
-                                        </CircularProgress>
-                                    </div>
-                                )
-                            }
+                            <div className='col-lg-6'>
+                                <FormControl id="shop-certificate-img">
+                                    <FormLabel>Shop certificate</FormLabel>
+                                    <input type='file' onChange={handleShopCertificateChange} className="form-control" id="formFile" />
+                                    <FormHelperText># This image will be used for verification of the Pharmacy</FormHelperText>
+                                </FormControl>
+                                {
+                                    imgUploading3 && (
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            padding: '30px'
+                                        }}>
+                                            <CircularProgress value={progress3} color="teal">
+                                                <CircularProgressLabel>{progress3}%</CircularProgressLabel>
+                                            </CircularProgress>
+                                        </div>
+                                    )
+                                }
 
-                            {shopCerificateUrl && <img className='img-fluid' src={shopCerificateUrl} alt="thumbnail" style={{ width: '500px' }} />}
+                                {shopCerificateUrl && <img className='img-fluid' src={shopCerificateUrl} alt="thumbnail" style={{ width: '500px' }} />}
+                            </div>
                         </div>
 
                         <Button type="submit" mt="8" mb="5" w="100%" colorScheme="teal" variant="solid">
