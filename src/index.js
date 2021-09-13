@@ -4,10 +4,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ChakraProvider } from "@chakra-ui/react"
+import { DarkMode } from "@chakra-ui/system";
 
 ReactDOM.render(
   <ChakraProvider>
-    <App />
+      <App />
   </ChakraProvider>,
   document.getElementById('root')
 );

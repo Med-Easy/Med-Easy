@@ -3,7 +3,7 @@ import { auth } from "../firebase";
 import firebase from "firebase/compat/app";
 import { useHistory } from "react-router-dom";
 
-const AuthContext = React.createContext()
+export const AuthContext = React.createContext()
 
 export function useAuth() {
   return useContext(AuthContext)
@@ -26,7 +26,14 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
-    return auth.signOut()
+    localStorage.removeItem('user-loggedIn');
+    localStorage.removeItem('user-details');
+    return auth.signOut();
+  }
+
+  const setUserCred = (userCred) => {
+    localStorage.setItem('user-details', JSON.stringify(userCred));
+    localStorage.setItem('user-loggedIn', JSON.stringify(true));
   }
 
 //   function resetPassword(email) {
@@ -48,7 +55,6 @@ const history = useHistory();
     const unsubscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user);
       setLoading(false);
-      history.push("/");
     })
     return unsubscribe
   }, [])
@@ -58,7 +64,8 @@ const history = useHistory();
     loginWithGoogle,
     signup,
     login,
-    logout
+    logout,
+    setUserCred
     // resetPassword,
     // updateEmail,
     // updatePassword

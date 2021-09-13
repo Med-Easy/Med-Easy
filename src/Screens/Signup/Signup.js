@@ -1,10 +1,23 @@
 import { useRef, useState } from "react";
-import { Box, Center, FormControl, Input, Button, Text, Image, Heading, Alert, AlertDescription, Spinner } from "@chakra-ui/react"
+import {
+    Box,
+    Center,
+    FormControl,
+    Input,
+    Button,
+    Text,
+    Image,
+    Heading,
+    Alert,
+    AlertDescription,
+    Spinner,
+    Select
+} from "@chakra-ui/react"
 import { Link, useHistory } from "react-router-dom";
 import google from "../Assets/google.png";
 import facebook from "../Assets/facebook.png";
 import { useAuth } from "../../Context/AuthContext";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import firebase from "firebase/compat/app";
 import {  WarningIcon } from "@chakra-ui/icons";
 
@@ -12,23 +25,29 @@ const Signup = () => {
 
     const emailRef = useRef();
     const passwordRef = useRef();
+    const fNameRef = useRef();
+    const lNameRef = useRef();
+    const userRef = useRef();
     const passwordConfirmRef = useRef();
-    const { signup, currentUser, loginWithGoogle } = useAuth();
+    const { signup, currentUser, loginWithGoogle, setUserCred } = useAuth();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const history = useHistory();
 
     async function handleSignInWithGoogle(e){
         e.preventDefault();
-        try {
-            // setError("");
-            // setLoading(true);
-            await loginWithGoogle()
-            history.push("/");
-            } catch {
-            // setError("Failure, minimum 6 characters password is required");
-            console.log("error");
-        }
+        
+        loginWithGoogle()
+        .then((authUser) => {
+            alert('Success');
+            console.log(authUser);
+        })
+        .catch(e => {
+            console.log(e.message)
+            setError("Failure, "+e.message);
+        })
+        .finally(()=>{
+        })
     }
 
     async function handleSignup(e) {
@@ -37,19 +56,87 @@ const Signup = () => {
         console.log(emailRef.current.value);
     
         if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-          return setError("Passwords do not match");
+            return setError("Passwords do not match");
         }
     
-        try {
-          setError("");
-          setLoading(true);
-          await signup(emailRef.current.value, passwordRef.current.value)
-          history.push("/");
-        } catch {
-          setError("Failure, minimum 6 characters password is required");
-        }
-    
-        setLoading(false);
+        setLoading(true);
+        auth.createUserWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
+        .then((authUser) => {
+            
+            authUser.user.updateProfile({
+                displayName: fNameRef.current.value+" "+lNameRef.current.value,
+            })
+
+            console.log('here entered --->');
+
+            const userCred = {
+                displayName: fNameRef.current.value+" "+lNameRef.current.value,
+                email: emailRef.current.value,
+                fName: fNameRef.current.value,
+                lName: lNameRef.current.value,
+                user_uid: authUser.user.uid,
+                _id: Date.now(),
+                type: userRef.current.value,
+                isVerified: false,
+                documents: [],
+                location: {
+                    latitude: '',
+                    longitude: ''
+                },
+                owner: '',
+                shopName: '',
+                shopAddress: {
+                    line1: '',
+                    line2: '',
+                    pin: ''
+                },
+                state: '',
+                city: '',
+                contact: '',
+                deliveryType: '',
+                medicines: [
+                    // {
+                    //     name: '',
+                    //     status: '',
+                    //     company: '',
+                    //     price: '',
+                    //     id: ''
+                    // }
+                ],
+                timings: {
+                    opening: '',
+                    closing: ''
+                },
+                requests: {
+                    new: [],
+                    confirmed: [],
+                    rejected: []
+                }
+            }
+            setUserCred(userCred);
+
+            db.collection("users").add(userCred) //users --> collection of all the users
+            .then(()=>{
+                if(userRef.current.value === 'Seller'){
+                    history.replace("/register/seller");
+                } else if(userRef.current.value === 'Customer') {
+                    history.replace('/home');
+                }
+                setLoading(false);
+            })
+        })
+        .catch(e => {
+            console.log(e.message)
+            setError("Failure, "+e.message);
+            setError(e.message);
+        })
+        .finally(()=>{
+            setLoading(false);
+        })
+    }
+
+    const userHandler = () => {
+
     }
 
     return (
@@ -81,7 +168,22 @@ const Signup = () => {
 
                 <Text textAlign="center" my="6">Or continue with email</Text>
 
-                <FormControl id="email">
+                <FormControl id="fName">
+                <Input ref={ fNameRef } type="text" placeholder="Enter first name" />
+                </FormControl>
+
+                <FormControl id="lName" mt="4">
+                <Input ref={ lNameRef } type="text" placeholder="Enter last name" />
+                </FormControl>
+
+                <FormControl id="user-type" mt="4">
+                    <Select placeholder="User type" ref={userRef}>
+                        <option value='Customer'>Customer</option>
+                        <option value='Seller'>Seller</option>
+                    </Select>
+                </FormControl>
+
+                <FormControl id="email" mt="4">
                 <Input ref={ emailRef } type="email" placeholder="Enter email" />
                 </FormControl>
 
@@ -96,7 +198,7 @@ const Signup = () => {
                 <Button type="submit" mt="8" mb="5" w="100%" colorScheme="teal" variant="solid">
                     Create account
                     { loading &&
-                    <Spinner ml="3"  color="white" />
+                        <Spinner ml="3"  color="white" />
                     }
                 </Button>
 

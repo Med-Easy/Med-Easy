@@ -5,13 +5,14 @@ import google from "../Assets/google.png";
 import facebook from "../Assets/facebook.png";
 import { useAuth } from "../../Context/AuthContext";
 import {  WarningIcon } from "@chakra-ui/icons";
+import { db } from "../../firebase";
 
 const Login = () => {
 
     const emailRef = useRef();
     const passwordRef = useRef();
 
-    const { login, loginWithGoogle } = useAuth();
+    const { login, loginWithGoogle, setUserCred } = useAuth();
     const [error, setError ] = useState("");
     const [loading, setLoading] = useState(false);
     const history = useHistory();
@@ -23,7 +24,7 @@ const Login = () => {
             // setLoading(true);
             await loginWithGoogle()
             history.push("/");
-            } catch {
+        } catch {
             // setError("Failure, minimum 6 characters password is required");
             console.log("error");
         }
@@ -31,18 +32,47 @@ const Login = () => {
 
     async function handleLogin(e) {
         e.preventDefault();
-        console.log("Indide handle login");
-    
-        try {
-          setError("");
-          setLoading(true);
-          await login(emailRef.current.value, passwordRef.current.value)
-          history.push("/");
-        } catch {
-          setError("Incorrect email or password");
-        }
-    
-        setLoading(false);
+        console.log("Inside handle login");
+
+        setError("");
+        setLoading(true);
+        login(emailRef.current.value, passwordRef.current.value)
+        .then((authUser) => {
+
+            db.collection("users").where("user_uid","==", authUser.user.uid).get()
+            .then(function(snapshot){
+                console.log(snapshot.docs[0].data());
+                
+                const userCred = {
+                    ...snapshot.docs[0].data()
+                }
+
+                const result = snapshot.docs[0].data();
+
+                setUserCred(userCred);
+                if(result.type === "Seller"){
+                    if(result.isVerified){
+                        history.push('/home');
+                    } else {
+                        history.push('/register/seller')
+                    }
+                } else if(result.type === 'Customer'){
+                    history.push("/home");
+                }
+                setLoading(false);
+            })
+            .catch((e)=>{
+                setError(e.message);
+            })
+        })
+        .catch(e => {
+            console.log(e.message)
+            setError("Failure, "+e.message);
+            setError(e.message);
+        })
+        .finally(()=>{
+            setLoading(false);
+        })
     }
 
 

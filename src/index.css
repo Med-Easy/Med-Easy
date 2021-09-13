@@ -1,0 +1,12 @@
+button:focus {
+    outline: none;
+}
+
+.btn:focus {
+    outline: none;
+}
+a:hover{
+    text-transform: none;
+    text-decoration: none;
+    color: initial;
+}
