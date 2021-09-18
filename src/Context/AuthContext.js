@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
   // The signed-in user info.
   var user = result.user;
   if(user){
-    history.push("/");
+    history.push("/home");
   }
   });
   }
