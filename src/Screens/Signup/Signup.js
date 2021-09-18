@@ -29,7 +29,7 @@ const Signup = () => {
     const lNameRef = useRef();
     const userRef = useRef();
     const passwordConfirmRef = useRef();
-    const { signup, currentUser, loginWithGoogle, setUserCred } = useAuth();
+    const { signup, currentUser, loginWithGoogle, setUserCred, currentUserCred, setCurrentUserCred } = useAuth();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const history = useHistory();
@@ -78,6 +78,9 @@ const Signup = () => {
                 _id: Date.now(),
                 type: userRef.current.value,
                 isVerified: false,
+                verifyProgress: false,
+                userVerified: 'no', //no, cancelled, verified
+                verifyFailedReason: '',
                 documents: [],
                 location: {
                     latitude: '',
@@ -94,15 +97,7 @@ const Signup = () => {
                 city: '',
                 contact: '',
                 deliveryType: '',
-                medicines: [
-                    // {
-                    //     name: '',
-                    //     status: '',
-                    //     company: '',
-                    //     price: '',
-                    //     id: ''
-                    // }
-                ],
+                medicines: [], //name, status, company, price, id
                 timings: {
                     opening: '',
                     closing: ''
@@ -111,16 +106,18 @@ const Signup = () => {
                     new: [],
                     confirmed: [],
                     rejected: []
-                }
+                },
+
             }
             setUserCred(userCred);
+            setCurrentUserCred(userCred);
 
             db.collection("users").add(userCred) //users --> collection of all the users
             .then(()=>{
                 if(userRef.current.value === 'Seller'){
                     history.replace("/register/seller");
                 } else if(userRef.current.value === 'Customer') {
-                    history.replace('/home');
+                    history.replace('/customer/dashboard');
                 }
                 setLoading(false);
             })

@@ -12,10 +12,12 @@ const Login = () => {
     const emailRef = useRef();
     const passwordRef = useRef();
 
-    const { login, loginWithGoogle, setUserCred } = useAuth();
+    const { login, loginWithGoogle, setUserCred, currentUser, setCurrentUser, setCurrentUserCred, currentUserCred } = useAuth();
     const [error, setError ] = useState("");
     const [loading, setLoading] = useState(false);
     const history = useHistory();
+
+    console.log('Current user ---->', currentUserCred);
 
     async function handleSignInWithGoogle(e){
         e.preventDefault();
@@ -48,15 +50,21 @@ const Login = () => {
 
                 const result = snapshot.docs[0].data();
 
-                setUserCred(userCred);
+                setCurrentUserCred(snapshot.docs[0].data());
+                setUserCred(snapshot.docs[0].data());
+
                 if(result.type === "Seller"){
-                    if(result.isVerified){
-                        history.push('/home');
-                    } else {
+                    if(result.isVerified && !result.verifyProgress && result.userVerified==='verified'){
+                        history.push('/seller/dashboard');
+                    } else if(!result.isVerified && result.verifyProgress) {
+                        history.push('/seller/verify');
+                    } else if(!result.isVerified && !result.verifyProgress && result.userVerified==='no'){
                         history.push('/register/seller')
+                    } else if(!result.isVerified && !result.verifyProgress && result.userVerified==='cancelled'){
+                        history.replace('/seller/verify/failed');
                     }
                 } else if(result.type === 'Customer'){
-                    history.push("/home");
+                    history.push("/customer/dashboard");
                 }
                 setLoading(false);
             })

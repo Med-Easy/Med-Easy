@@ -284,6 +284,8 @@ const RegisterSeller = ({ coords }) => {
             haveNgo: false,
             type: userDetails.type,
             isVerified: false,
+            verifyProgress: true,
+            userVerified: 'no', //no, cancelled, verified
             documents: {
                 shopCerificate: shopCerificateUrl,
                 shopId: shopIdUrl,
@@ -313,7 +315,8 @@ const RegisterSeller = ({ coords }) => {
                 new: [],
                 confirmed: [],
                 rejected: []
-            }
+            },
+            verifyFailedReason: '',
         }
 
         console.log('Details to be updated', userCred);
@@ -321,7 +324,7 @@ const RegisterSeller = ({ coords }) => {
         db.collection("users").doc(docId).update(userCred)
         .then(() => {
             console.log('success');
-            history.replace('/home')
+            history.replace('/seller/verify');
         })
         .catch(e=>{
             console.log(e.message);

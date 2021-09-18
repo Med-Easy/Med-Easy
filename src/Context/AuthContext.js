@@ -10,7 +10,8 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState()
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserCred, setCurrentUserCred] = useState(null);
   const [loading, setLoading] = useState(true)
   const history = useHistory();
 
@@ -41,12 +42,16 @@ export function AuthProvider({ children }) {
   function logout() {
     localStorage.removeItem('user-loggedIn');
     localStorage.removeItem('user-details');
+    setCurrentUser(null);
+    setCurrentUserCred(null);
     return auth.signOut();
   }
 
   const setUserCred = (userCred) => {
     localStorage.setItem('user-details', JSON.stringify(userCred));
     localStorage.setItem('user-loggedIn', JSON.stringify(true));
+    // setCurrentUser(userCred);
+    // setCurrentUserCred(userCred)
   }
 
 //   function resetPassword(email) {
@@ -65,7 +70,7 @@ export function AuthProvider({ children }) {
 
 
   useEffect(() => {
-      const unsubscribe = auth.onAuthStateChanged(user => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user);
       setLoading(false);
     })
@@ -78,7 +83,10 @@ export function AuthProvider({ children }) {
     signup,
     login,
     logout,
-    setUserCred
+    setUserCred,
+    setCurrentUser,
+    setCurrentUserCred,
+    currentUserCred
     // resetPassword,
     // updateEmail,
     // updatePassword
