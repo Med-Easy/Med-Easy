@@ -35,7 +35,7 @@ export default function Drugs() {
     const { currentUserCred } = useAuth();
     const [docId, setDocId] = useState('');
 
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const medicineRef = useRef();
     const priceRef = useRef();

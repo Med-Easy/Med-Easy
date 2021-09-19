@@ -24,7 +24,8 @@ import {
     Input,
     FormControl,
     FormLabel,
-    Textarea
+    Textarea,
+    Spinner
 } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
 import { IconButton } from '@material-ui/core';
@@ -35,6 +36,7 @@ import CustomerCard from './CustomerCard';
 function Requests() {
     const { currentUserCred, setCurrentUserCred } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
 
     const [confirmedModal, setConfirmedModal] = useState(false);
     const [rejectedModal, setRejectedModal] = useState(false);
@@ -44,6 +46,8 @@ function Requests() {
     
     const [scrollBehavior, setScrollBehavior] = useState("inside")
     const confirmedRef = useRef();
+
+    const declineRef = useRef();
 
     const openConfirmed = () => setConfirmedModal(true);
     const closeConfirmed = () => setConfirmedModal(false);
@@ -98,6 +102,72 @@ function Requests() {
 
     const openReason = () => {
 
+    }
+
+    const confirmOrderHandler = (order) => {
+
+        console.log(order);
+
+        setConfirmLoading(true);
+        db.collection("users").where("contact","==", order.phone).get()
+        .then((snapshot) => {
+
+            db.collection("users").doc(snapshot.docs[0].id).update({
+                requests: {
+                    new: newRequests.filter(o => o != order),
+                    confirmed: [order, ...confirmedRequests],
+                    rejected: rejectedRequests
+                }
+            })
+            .then(()=>{
+                setNewRequests(newRequests.filter(o => o != order));
+                setConfirmedRequests(prev => [order, ...prev]);
+                alert('Order Confirmed!!!')
+            })
+            .catch((e)=>{
+                console.log(e);
+            })
+        })
+        .catch((e)=>{
+            alert(e.message);
+        })
+        .finally(()=>{
+            setConfirmLoading(false);
+            closeView();
+        })
+    }
+
+    const rejectOrderHandler = (order) => {
+
+        setConfirmLoading(true);
+        db.collection("users").where("contact","==", order.phone).get()
+        .then((snapshot) => {
+            const toRemove = {...order, declineReason: declineRef.current.value};
+            console.log('Full order --->', toRemove);
+
+            db.collection("users").doc(snapshot.docs[0].id).update({
+                requests: {
+                    new: newRequests.filter(o => o != order),
+                    confirmed: confirmedRequests,
+                    rejected: [toRemove, ...rejectedRequests]
+                }
+            })
+            .then(()=>{
+                setNewRequests(newRequests.filter(o => o != order));
+                setRejectedRequests(prev => [toRemove, ...prev]);
+                alert('Order Rejected!!!');
+            })
+            .catch((e)=>{
+                console.log(e);
+            })
+        })
+        .catch((e)=>{
+            alert(e.message);
+        })
+        .finally(()=>{
+            setConfirmLoading(false);
+            closeView();
+        })
     }
 
     {loading && <h1>Loading.....</h1>}
@@ -261,7 +331,7 @@ function Requests() {
                                     <div className='input col-lg-6'>
                                         <FormControl mb={4} id="shop-name">
                                             <FormLabel>Date of order</FormLabel>
-                                            <Input type="text" required disabled value={currentMed?.date?.slice(0, 15)} />
+                                            <Input type="text" required disabled value={currentMed?.date} />
                                         </FormControl>
                                     </div>
                                 </div>
@@ -291,7 +361,9 @@ function Requests() {
 
                                 <Button style={{
                                     width: '100%'
-                                }} mb={4} colorScheme="teal" >Cofirm Order</Button>
+                                }} mb={4} colorScheme="teal" onClick={()=>confirmOrderHandler(currentMed)} >Cofirm Order { confirmLoading &&
+                                    <Spinner ml="3"  color="white" />
+                                }</Button>
                                 <br />
                                 <Button style={{
                                     width: '100%'
@@ -302,14 +374,14 @@ function Requests() {
                                 }}>
                                     <FormControl mt={4} id="shop-name">
                                         <FormLabel>Decline Reason</FormLabel>
-                                        <Textarea required />
+                                        <Textarea ref={declineRef} required />
                                     </FormControl>
 
                                     <br />
 
                                     <Button style={{
                                         width: '100%'
-                                    }}>Submit</Button>
+                                    }} onClick={()=>rejectOrderHandler(currentMed)}>Submit</Button>
                                 </div>
 
                             </div>

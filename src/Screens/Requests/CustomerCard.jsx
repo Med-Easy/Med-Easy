@@ -14,8 +14,8 @@ export default function CustomerCard({
             <div>Customer Contact: {order.phone}</div>
             <div>Order date: {order.date}</div>
             {
-                order.confirmed===false && order.delineReason !== "" ? (
-                    <div>Reason: {order.delineReason}</div>
+                order.confirmed===false && order.declineReason !== "" ? (
+                    <div>Reason: {order.declineReason}</div>
                 ) : ''
             }
         </div>
