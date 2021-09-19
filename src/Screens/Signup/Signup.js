@@ -151,9 +151,8 @@ const Signup = () => {
                 <Heading textAlign="center" fontSize="4xl" mt="2" mb="6">Create an account</Heading>
 
                 <form onSubmit={ handleSignup }>
-                <Button display="flex" w="100%"
+                {/* <Button display="flex" w="100%"
                 onClick={ handleSignInWithGoogle }>
-                {/* onClick={() => auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider())} */}
                     <Image w="7" src={ google } alt="" />
                     <Text ml="3" mr="4">Continue with google</Text>
                 </Button>
@@ -161,9 +160,9 @@ const Signup = () => {
                 <Button display="flex" w="100%" mt="3">
                     <Image w="7" src={ facebook } alt="" />
                     <Text ml="3">Continue with facebook</Text>
-                </Button>
+                </Button> */}
 
-                <Text textAlign="center" my="6">Or continue with email</Text>
+                {/* <Text textAlign="center" my="6">Or continue with email</Text> */}
 
                 <FormControl id="fName">
                 <Input ref={ fNameRef } type="text" placeholder="Enter first name" />

@@ -188,7 +188,7 @@ const RegisterNgo = () => {
             setLoading(false);
             setBtnText("Submitted");
             sendConfirmation();
-            history.push("/home");
+            history.push("/organisation/dashboard");
         })
         .catch(function(err){
             console.log.log("Error " + err);

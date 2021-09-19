@@ -98,7 +98,7 @@ const Login = () => {
                 <Heading textAlign="center" fontSize="4xl" mt="2" mb="6">Login to continue</Heading>
 
                 <form onSubmit={ handleLogin }>
-                <Button display="flex" w="100%" onClick={ handleSignInWithGoogle }>
+                {/* <Button display="flex" w="100%" onClick={ handleSignInWithGoogle }>
                     <Image w="7" src={ google } alt="" />
                     <Text ml="3" mr="4">Continue with google</Text>
                 </Button>
@@ -108,7 +108,7 @@ const Login = () => {
                     <Text ml="3">Continue with facebook</Text>
                 </Button>
 
-                <Text textAlign="center" my="6">Or continue with email</Text>
+                <Text textAlign="center" my="6">Or continue with email</Text> */}
 
                 <FormControl id="email">
                 <Input ref={ emailRef } type="email" placeholder="Enter email" autoComplete="off" />

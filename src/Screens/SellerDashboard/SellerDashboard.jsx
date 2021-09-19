@@ -56,6 +56,8 @@ const SellerDashboard = () => {
                 }}>Medicines</Link>
                 <br />
                 <Link to='/seller/medicines/requests'>Requests</Link>
+                <Link to='/organisation/dashboard'>Organisations</Link>
+                <Link to='/all/organisations'>Donate</Link>
             </div>
 
         </Box>
