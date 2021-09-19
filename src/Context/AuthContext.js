@@ -3,18 +3,32 @@ import { auth } from "../firebase";
 import firebase from "firebase/compat/app";
 import { useHistory } from "react-router-dom";
 
-const AuthContext = React.createContext()
+export const AuthContext = React.createContext()
 
 export function useAuth() {
   return useContext(AuthContext)
 }
 
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState()
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserCred, setCurrentUserCred] = useState(null);
   const [loading, setLoading] = useState(true)
+  const history = useHistory();
 
   function loginWithGoogle() {
-    return auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+  // Using a popup.
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('profile');
+  provider.addScope('email');
+  firebase.auth().signInWithPopup(provider).then(function(result) {
+  // This gives you a Google Access Token.
+  var token = result.credential.accessToken;
+  // The signed-in user info.
+  var user = result.user;
+  if(user){
+    history.push("/home");
+  }
+  });
   }
 
   function signup(email, password) {
@@ -26,7 +40,18 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
-    return auth.signOut()
+    localStorage.removeItem('user-loggedIn');
+    localStorage.removeItem('user-details');
+    setCurrentUser(null);
+    setCurrentUserCred(null);
+    return auth.signOut();
+  }
+
+  const setUserCred = (userCred) => {
+    localStorage.setItem('user-details', JSON.stringify(userCred));
+    localStorage.setItem('user-loggedIn', JSON.stringify(true));
+    // setCurrentUser(userCred);
+    // setCurrentUserCred(userCred)
   }
 
 //   function resetPassword(email) {
@@ -41,24 +66,27 @@ export function AuthProvider({ children }) {
 //     return currentUser.updatePassword(password)
 //   }
 
-const history = useHistory();
+
 
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user);
       setLoading(false);
-      history.push("/");
     })
-    return unsubscribe
-  }, [])
+    return unsubscribe;
+  }, [currentUser,history])
 
   const value = {
     currentUser,
     loginWithGoogle,
     signup,
     login,
-    logout
+    logout,
+    setUserCred,
+    setCurrentUser,
+    setCurrentUserCred,
+    currentUserCred
     // resetPassword,
     // updateEmail,
     // updatePassword

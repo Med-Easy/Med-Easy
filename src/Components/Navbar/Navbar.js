@@ -23,11 +23,11 @@ const Navbar = () => {
     }
 
     return (
-        <Box display="flex" boxShadow="base" py="2">
+        <Box mb="12" display="flex" boxShadow="base" py="2">
 
             <Link>
             <Text fontSize="2xl" ml="5">
-            Swiftchat
+            MedEasy
             </Text>
             </Link>
 
