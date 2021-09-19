@@ -1,6 +1,6 @@
 import "./MedicineForm.css";
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { useToast, Box, Center, Alert, AlertDescription, FormControl, FormLabel, Input, Spinner, Button, Heading, Select, Textarea, Image, Text } from "@chakra-ui/react";
 import Navbar from "../../Components/Navbar/Navbar";
 import MedicineImg from "../Assets/medicine.jpg"
@@ -8,11 +8,13 @@ import { useAuth } from "../../Context/AuthContext";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/storage';
+import { storage, db } from '../../firebase';
 import {  WarningIcon } from "@chakra-ui/icons";
 
 const MedicineForm = () => {
 
     const { currentUser } = useAuth();
+    const { id } = useParams();
 
     const [file, setFile] = useState("");
     const [imgUrl, setImgUrl] = useState(MedicineImg);
@@ -60,18 +62,55 @@ const MedicineForm = () => {
         setUploadBtnText("Uploading...");
 
         for(let i=0; i<2; i++){
-            const img = file[i];
-            const storageRef = firebase.storage().ref()
-            const fileRef = storageRef.child(img.name)
 
-            if(i === 0){
-                await fileRef.put(img)
-                setImgUrl(await fileRef.getDownloadURL());
-            } 
-            if(i === 1){
-                await fileRef.put(img)
-                setSecondImgUrl(await fileRef.getDownloadURL());
+            if (file[i]) {
+                let reader = new FileReader();
+                reader.onload = (e) => {
+                };
+                reader.readAsDataURL(file[i]);
+    
+                let val=file[i];
+                let imageName = Date.now();
+                const uploadTask = storage.ref(`medicine-documents/${currentUser.email}/${imageName}`).put(val);
+                uploadTask.on(
+                    "state_changed",
+                    snapshot => {
+                        // setUploadStatus1("Fetching url...");
+                    },
+                    error => {
+                        console.log(error);
+                    },
+                    () => {
+                        storage
+                        .ref()
+                        .child(`medicine-documents/${currentUser.email}/`+imageName)
+                        .getDownloadURL()
+                        .then(url => {
+                            console.log('this is the image url', url);
+                            if(i === 0){
+                                setImgUrl(url);
+                            } 
+                            if(i === 1){
+                                setSecondImgUrl(url);
+                            }
+                        });
+                    }
+                );
             }
+
+            // const img_name = Date.now();
+            // const img = file[i];
+            // const storageRef = firebase.storage().ref()
+            // const fileRef = storageRef.child(img_name)
+
+            // if(i === 0){
+            //     await fileRef.put(img)
+            //     setImgUrl(await fileRef.getDownloadURL());
+            // } 
+            // if(i === 1){
+            //     await fileRef.put(img)
+            //     setSecondImgUrl(await fileRef.getDownloadURL());
+            // }
         }
         setStatus(false);
         setUploadBtnText("Uploaded");
@@ -85,8 +124,10 @@ const MedicineForm = () => {
         const db = firebase.firestore();
         db.collection("medicine-form").add({
             user_uid: currentUser.uid,
-            img_one: imgUrl,
-            img_second: secondImgUrl,
+            med_img: {
+                img_one: imgUrl,
+                img_second: secondImgUrl
+            },
             name: name,
             email: email,
             contact: contact,
@@ -94,6 +135,7 @@ const MedicineForm = () => {
             expire_date: date,
             location: location,
             address: address,
+            identfier: id,
             time: firebase.firestore.Timestamp.fromDate(new Date())
         })
         .then(function(res){
@@ -101,7 +143,7 @@ const MedicineForm = () => {
             setBtnText("Submitted");
             sendConfirmation();
             console.log(res);
-            history.push("/");
+            history.push("/home");
         })
         .catch(function(err){
             setError("Failed to submit.");
@@ -172,12 +214,36 @@ const MedicineForm = () => {
             <FormControl mt="4" id="location">
             <FormLabel>Your location</FormLabel>
             <Select onChange={ (e) => setLocation(e.target.value)} name="location" placeholder="Select option">
-            <option value="New Delhi">New Delhi</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Bengaluru">Bengaluru</option>
-            <option value="Chennai">Chennai</option>
-            <option value="Kolkata">Kolkata</option>
-            <option value="Guwahati">Guwahati</option>
+            <option value="Angul">Angul</option>
+            <option value="Balangir">Balangir</option>
+            <option value="Balasore">Balasore</option>
+            <option value="Bargarh">Bargarh</option>
+            <option value="Bhadrak">Bhadrak</option>
+            <option value="Boudh">Boudh</option>
+            <option value="Cuttack">Cuttack</option>
+            <option value="Deogarh">Deogarh</option>
+            <option value="Dhenkanal">Dhenkanal</option>
+            <option value="Gajapati">Gajapati</option>
+            <option value="Ganjam">Ganjam</option>
+            <option value="Jagatsinghapur">Jagatsinghapur</option>
+            <option value="Jajpur">Jajpur</option>
+            <option value="Jharsuguda">Jharsuguda</option>
+            <option value="Kalahandi">Kalahandi</option>
+            <option value="Kandhamal">Kandhamal</option>
+            <option value="Kendrapara">Kendrapara</option>
+            <option value="Kendujhar">Kendujhar</option>
+            <option value="Khordha">Khordha</option>
+            <option value="Koraput">Koraput</option>
+            <option value="Malkangiri">Malkangiri</option>
+            <option value="Mayurbhanj">Mayurbhanj</option>
+            <option value="Nabarangpur">Nabarangpur</option>
+            <option value="Nayagarh">Nayagarh</option>
+            <option value="Nuapada">Nuapada</option>
+            <option value="Puri">Puri</option>
+            <option value="Rayagada">Rayagada</option>
+            <option value="Sambalpur">Sambalpur</option>
+            <option value="Sonepur">Sonepur</option>
+            <option value="Sundargarh">Sundargarh</option>
             </Select>
             </FormControl>
 

@@ -15,6 +15,13 @@ import Drugs from './Screens/Drugs/Drugs';
 import Requests from './Screens/Requests/Requests';
 import CustomerDashboard from './Screens/Customer/Dashboard/CustomerDashboard';
 import FindMed from './Screens/Customer/FindMed/FindMed';
+import RegisterNgo from './Screens/RegisterNgo/RegisterNgo';
+import NgoPortal from './Screens/NgoPortal/NgoPortal';
+import NgoList from './Screens/NgoList/NgoList';
+import NgoDetails from './Screens/NgoDetails/NgoDetails';
+import EditNgoDetails from './Screens/EditNgoDetails/EditNgoDetails';
+import OrganisationChat from './Screens/OrganisationChat/OrganisationChat';
+import AdminDashboard from './Screens/AdminDashboard/AdminDashboard';
 
 function App() {
   return (
@@ -37,6 +44,20 @@ function App() {
 
           <PrivateRoute exact path='/customer/dashboard' component={CustomerDashboard}/>
           <PrivateRoute exact path='/customer/find-medicines' component={FindMed}/>
+          <PrivateRoute exact path="/medicine/details/form/:id" component={ MedicineForm }/>
+          <PrivateRoute exact path="/register/organisation" component={ RegisterNgo }/>
+          <PrivateRoute exact path="/organisation/dashboard" component={ NgoPortal }/>
+          <PrivateRoute exact path="/organisation/details/:id" component={ NgoDetails }/>
+          <PrivateRoute exact path="/edit/organisation/details/:id" component={ EditNgoDetails }/>
+          <PrivateRoute exact path="/organisation/chat" component={ OrganisationChat }/>
+
+          <Route exact path="/admin/dashboard">
+            <AdminDashboard/>
+          </Route>
+
+          <Route exact path="/all/organisations">
+            <NgoList/>
+          </Route>
 
           <Route exact path="/signup">
             <Signup/>
