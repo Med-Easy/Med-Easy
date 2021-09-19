@@ -48,11 +48,15 @@ const SellerDashboard = () => {
     return (
         <Box>
             <Navbar/>
-            <h1>{currentUserCred?.email}</h1>
-            <h1>Seller Dashboard</h1>
-            <Link to='/seller/medicines'>Medicines</Link>
-            <br />
-            <Link to='/seller/medicines/requests'>Requests</Link>
+            <div className='container'>
+                <h1>{currentUserCred?.email}</h1>
+                <h1>Seller Dashboard</h1>
+                <Link to='/seller/medicines' style={{
+                    
+                }}>Medicines</Link>
+                <br />
+                <Link to='/seller/medicines/requests'>Requests</Link>
+            </div>
 
         </Box>
     );

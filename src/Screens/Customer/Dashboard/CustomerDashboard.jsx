@@ -42,7 +42,9 @@ export default function CustomerDashboard() {
                     Find Medicines
                 </Link>
                 <br />
-                <Link />
+                <Link to='/register/organisation'>
+                    Register as a ngo
+                </Link>
             </div>
         </div>
     )
